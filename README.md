@@ -1,1 +1,1 @@
-qmlbars
+Magnetic map with qmlbars visualizer
