@@ -44,7 +44,13 @@ Rectangle {
 
     Data {
         id: graphData
-    }
+        Component.onCompleted: {
+            graphData.addData();
+            console.log("addData Completed");
+
+        }
+        }
+
 
     Axes {
         id: graphAxes
@@ -96,7 +102,8 @@ Rectangle {
             shadowQuality: AbstractGraph3D.ShadowQualityMedium
             selectionMode: AbstractGraph3D.SelectionItem
             theme: Theme3D {
-                type: Theme3D.ThemeRetro
+                //type: Theme3D.ThemeRetro
+                type:Theme3D.ThemeIsabelle
                 labelBorderEnabled: true
                 font.pointSize: 35
                 labelBackgroundEnabled: true
@@ -127,11 +134,11 @@ Rectangle {
                 ItemModelBarDataProxy {
                     id: secondaryProxy
                     itemModel: graphData.model
-                    rowRole: "timestamp"
-                    columnRole: "timestamp"
-                    valueRole: "expenses"
-                    rowRolePattern: /^(\d\d\d\d).*$/
-                    columnRolePattern: /^.*-(\d\d)$/
+                    rowRole: "coordenates"
+                    columnRole: "coordenates"
+                    valueRole: "direction"
+                    rowRolePattern: /^(\d).*$/
+                    columnRolePattern: /^.*-(\d)$/
                     valueRolePattern: /-/
                     rowRoleReplace: "\\1"
                     columnRoleReplace: "\\1"
@@ -151,17 +158,17 @@ Rectangle {
             //! [3]
             Bar3DSeries {
                 id: barSeries
-                itemLabelFormat: "Income, @colLabel, @rowLabel: @valueLabel"
+                itemLabelFormat: "Mags, @colLabel, @rowLabel: @valueLabel"
                 baseGradient: barGradient
 
                 ItemModelBarDataProxy {
                     id: modelProxy
                     itemModel: graphData.model
-                    rowRole: "timestamp"
-                    columnRole: "timestamp"
-                    valueRole: "income"
-                    rowRolePattern: /^(\d\d\d\d).*$/
-                    columnRolePattern: /^.*-(\d\d)$/
+                    rowRole: "coordenates"
+                    columnRole: "coordenates"
+                    valueRole: "mags"
+                    rowRolePattern: /^(\d).*$/
+                    columnRolePattern: /^.*-(\d)$/
                     rowRoleReplace: "\\1"
                     columnRoleReplace: "\\1"
                     multiMatchBehavior: ItemModelBarDataProxy.MMBCumulative
@@ -183,9 +190,9 @@ Rectangle {
         id: tableView
         anchors.top: parent.top
         anchors.left: parent.left
-        TableViewColumn{ role: "timestamp" ; title: "Month" ; width: tableView.width / 2 }
-        TableViewColumn{ role: "expenses" ; title: "Expenses" ; width: tableView.width / 4 }
-        TableViewColumn{ role: "income" ; title: "Income" ; width: tableView.width / 4 }
+        TableViewColumn{ role: "coordenates" ; title: "Latitude" ; width: tableView.width / 2 }
+        TableViewColumn{ role: "direction" ; title: "Direction" ; width: tableView.width / 4 }
+        TableViewColumn{ role: "mags" ; title: "Magnet" ; width: tableView.width / 4 }
         itemDelegate: Item {
             Text {
                 id: delegateText
@@ -205,7 +212,7 @@ Rectangle {
                 onOriginalTextChanged: {
                     if (styleData.column === 0) {
                         if (delegateText.originalText !== "") {
-                            var pattern = /(\d\d\d\d)-(\d\d)/
+                            var pattern = /(\d)-(\d)/
                             var matches = pattern.exec(delegateText.originalText)
                             var colIndex = parseInt(matches[2], 10) - 1
                             delegateText.customText = matches[1] + " - " + graphAxes.column.labels[colIndex]
@@ -222,8 +229,8 @@ Rectangle {
         //! [2]
         onCurrentRowChanged: {
             var timestamp = graphData.model.get(currentRow).timestamp
-            var pattern = /(\d\d\d\d)-(\d\d)/
-            var matches = pattern.exec(timestamp)
+            var pattern = /(\d)-(\d)/
+            var matches = pattern.exec(coordenates)
             var rowIndex = modelProxy.rowCategoryIndex(matches[1])
             var colIndex
             if (barGraph.columnAxis === graphAxes.total)
@@ -248,80 +255,80 @@ Rectangle {
             id: changeDataButton
             Layout.fillWidth: true
             Layout.fillHeight: true
-            text: "Show 2010 - 2012"
-            clip: true
-            //! [1]
-            onClicked: {
-                if (text === "Show yearly totals") {
-                    modelProxy.autoRowCategories = true
-                    secondaryProxy.autoRowCategories = true
-                    modelProxy.columnRolePattern = /^.*$/
-                    secondaryProxy.columnRolePattern = /^.*$/
-                    graphAxes.value.autoAdjustRange = true
-                    barGraph.columnAxis = graphAxes.total
-                    text = "Show all years"
-                } else if (text === "Show all years") {
-                    modelProxy.autoRowCategories = true
-                    secondaryProxy.autoRowCategories = true
-                    modelProxy.columnRolePattern = /^.*-(\d\d)$/
-                    secondaryProxy.columnRolePattern = /^.*-(\d\d)$/
-                    graphAxes.value.min = 0
-                    graphAxes.value.max = 35
-                    barGraph.columnAxis = graphAxes.column
-                    text = "Show 2010 - 2012"
-                } else { // text === "Show 2010 - 2012"
-                    // Explicitly defining row categories, since we do not want to show data for
-                    // all years in the model, just for the selected ones.
-                    modelProxy.autoRowCategories = false
-                    secondaryProxy.autoRowCategories = false
-                    modelProxy.rowCategories = ["2010", "2011", "2012"]
-                    secondaryProxy.rowCategories = ["2010", "2011", "2012"]
-                    text = "Show yearly totals"
-                }
-            }
+//            text: "Show 2010 - 2012"
+//            clip: true
+//            //! [1]
+//            onClicked: {
+//                if (text === "Show yearly totals") {
+//                    modelProxy.autoRowCategories = true
+//                    secondaryProxy.autoRowCategories = true
+//                    modelProxy.columnRolePattern = /^.*$/
+//                    secondaryProxy.columnRolePattern = /^.*$/
+//                    graphAxes.value.autoAdjustRange = true
+//                    barGraph.columnAxis = graphAxes.total
+//                    text = "Show all years"
+//                } else if (text === "Show all years") {
+//                    modelProxy.autoRowCategories = true
+//                    secondaryProxy.autoRowCategories = true
+//                    modelProxy.columnRolePattern = /^.*-(\d\d)$/
+//                    secondaryProxy.columnRolePattern = /^.*-(\d\d)$/
+//                    graphAxes.value.min = 0
+//                    graphAxes.value.max = 35
+//                    barGraph.columnAxis = graphAxes.column
+//                    text = "Show 2010 - 2012"
+//                } else { // text === "Show 2010 - 2012"
+//                    // Explicitly defining row categories, since we do not want to show data for
+//                    // all years in the model, just for the selected ones.
+//                    modelProxy.autoRowCategories = false
+//                    secondaryProxy.autoRowCategories = false
+//                    modelProxy.rowCategories = ["2010", "2011", "2012"]
+//                    secondaryProxy.rowCategories = ["2010", "2011", "2012"]
+//                    text = "Show yearly totals"
+//                }
+//            }
             //! [1]
         }
 
-        Button {
-            id: shadowToggle
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            text: barGraph.shadowsSupported ? "Hide Shadows" : "Shadows not supported"
-            clip: true
-            enabled: barGraph.shadowsSupported
-            onClicked: {
-                if (barGraph.shadowQuality == AbstractGraph3D.ShadowQualityNone) {
-                    barGraph.shadowQuality = AbstractGraph3D.ShadowQualityMedium;
-                    text = "Hide Shadows"
-                } else {
-                    barGraph.shadowQuality = AbstractGraph3D.ShadowQualityNone;
-                    text = "Show Shadows"
-                }
-            }
-        }
+//        Button {
+//            id: shadowToggle
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            text: barGraph.shadowsSupported ? "Hide Shadows" : "Shadows not supported"
+//            clip: true
+//            enabled: barGraph.shadowsSupported
+//            onClicked: {
+//                if (barGraph.shadowQuality == AbstractGraph3D.ShadowQualityNone) {
+//                    barGraph.shadowQuality = AbstractGraph3D.ShadowQualityMedium;
+//                    text = "Hide Shadows"
+//                } else {
+//                    barGraph.shadowQuality = AbstractGraph3D.ShadowQualityNone;
+//                    text = "Show Shadows"
+//                }
+//            }
+//        }
 
         Button {
             id: seriesToggle
             Layout.fillWidth: true
             Layout.fillHeight: true
-            text: "Show Expenses"
+            text: "Show Direction"
             clip: true
             //! [0]
             onClicked: {
-                if (text === "Show Expenses") {
+                if (text === "Show Direction") {
                     barSeries.visible = false
                     secondarySeries.visible = true
                     barGraph.valueAxis.labelFormat = "-%.2f M\u20AC"
-                    secondarySeries.itemLabelFormat = "Expenses, @colLabel, @rowLabel: @valueLabel"
+                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: @valueLabel"
                     text = "Show Both"
                 } else if (text === "Show Both") {
                     barSeries.visible = true
                     barGraph.valueAxis.labelFormat = "%.2f M\u20AC"
-                    secondarySeries.itemLabelFormat = "Expenses, @colLabel, @rowLabel: -@valueLabel"
-                    text = "Show Income"
-                } else { // text === "Show Income"
+                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: -@valueLabel"
+                    text = "Show Magnet"
+                } else { // text === "Show Magnet"
                     secondarySeries.visible = false
-                    text = "Show Expenses"
+                    text = "Show Direction"
                 }
             }
             //! [0]
