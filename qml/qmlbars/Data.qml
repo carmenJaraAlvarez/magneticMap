@@ -38,19 +38,32 @@ Item {
         //ListElement{ timestamp: "2006-01"; expenses: "-4";  income: "5" }
 
     }
-    function addData(){
+    function addData(myIndex, anomalyVector){
         var x;
         var y;
         var mag;
         var numGrid=10;
-        for(var i=0;i<numGrid;i++){
-                for(var j=0;j<numGrid;j++){
-
-                    mag=3;
-                    var newdata={coordenates: i+"-"+j, direction: mag,  mags: mag };
-                    dataModel.append(newdata);
-            }
+//        for(var i=0;i<numGrid;i++){
+//                for(var j=0;j<numGrid;j++){
+        x=Math.trunc(myIndex/numGrid);
+        if(myIndex>0){
+             y=myIndex%numGrid;
         }
+        else{
+            y=myIndex;
+        }
+
+
+        mag=anomalyVector.length()*1000000;//(microteslas)
+        console.log("***********Index:Anomaly->", myIndex,":",anomalyVector.toString(),mag,"->",x,",",y);
+                    //mag=3;
+                    //var newdata={coordenates: i+"-"+j, direction: mag,  mags: mag };
+        if(myIndex<=numGrid*numGrid){
+            var newdata={coordenates: x+"-"+y, direction: anomalyVector,  mags: mag };
+                        dataModel.append(newdata);
+        }
+//            }
+//        }
 
 
     }

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/qmlbars/Axes.qml</file>
+        <file>qml/qmlbars/Data.qml</file>
+        <file>qml/qmlbars/main.qml</file>
+        <file>qml/qmlbars/Acceler.qml</file>
+        <file>qml/qmlbars/Magnet.qml</file>
+    </qresource>
+</RCC>

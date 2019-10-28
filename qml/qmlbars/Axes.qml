@@ -60,7 +60,7 @@ Item {
         id: valueAxis
         min: 0
         max: 35
-        labelFormat: "%.2f M\u20AC"
+       // labelFormat: "%.2f M\u20AC"
         title: "Mag"
         labelAutoRotation: 90
     }

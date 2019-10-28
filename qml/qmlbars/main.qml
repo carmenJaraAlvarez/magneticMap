@@ -33,23 +33,73 @@ import QtQuick.Layouts 1.0
 import QtDataVisualization 1.1
 import QtQuick.Window 2.0
 import "."
+import QtSensors 5.2
 
 Rectangle {
     id: mainview
     width: 1280
     height: 1024
+    property int myIndex: 0
 
     property int buttonLayoutHeight: 180;
     state: Screen.width < Screen.height ? "portrait" : "landscape"
-
     Data {
         id: graphData
         Component.onCompleted: {
-            graphData.addData();
+
             console.log("addData Completed");
 
         }
         }
+
+    Magnet {
+        id: localMag
+        returnGeoValues : false
+        //The primary difference between raw and geomagnetic values is
+        //that extra processing is done to eliminate local magnetic interference
+        //from the geomagnetic values so they represent only the effect of the Earth's magnetic field.
+
+        onReadingChanged: {
+
+            //The accuracy of each reading is measured as a number from 0 to 1.
+            //A value of 1 is the highest level that the device can support and 0 is the worst
+ //           console.log("Local:",localMag.reading.x, ",", localMag.reading.y, ",", localMag.reading.z);
+
+        }
+    }
+        Magnet {
+            id: geoMag
+            returnGeoValues : true
+            //The primary difference between raw and geomagnetic values is
+            //that extra processing is done to eliminate local magnetic interference
+            //from the geomagnetic values so they represent only the effect of the Earth's magnetic field.
+
+            onReadingChanged: {
+
+                //The accuracy of each reading is measured as a number from 0 to 1.
+                //A value of 1 is the highest level that the device can support and 0 is the worst
+               // console.log("Geo:",geoMag.reading.x, ",", geoMag.reading.y, ",", geoMag.reading.z);
+               //TIMER TODO
+//                var geoVector = Qt.vector3d(geoMag.reading.x, geoMag.reading.y, geoMag.reading.z);
+//                var localVector = Qt.vector3d(localMag.reading.x, localMag.reading.y, localMag.reading.z);
+//                var anomalyVector = geoVector.minus(localVector);
+
+
+//                graphData.addData(myIndex, anomalyVector);
+//                myIndex+=1;
+ //               console.log("***********Index:Anomaly->", myIndex,":",anomalyVector.toString());
+            }
+    }
+//        Acceler{
+//             id: myAccel
+
+//             onReadingChanged: {
+
+//                     console.log("Acel:",myAccel.reading.x, ",", myAccel.reading.y, ",", myAccel.reading.z);
+
+//                 }
+//         }
+
 
 
     Axes {
@@ -255,10 +305,29 @@ Rectangle {
             id: changeDataButton
             Layout.fillWidth: true
             Layout.fillHeight: true
+            text: "Read"
 //            text: "Show 2010 - 2012"
 //            clip: true
 //            //! [1]
-//            onClicked: {
+            onClicked: {
+
+//                geoMag.start();
+//                localMag.start();
+
+                var geoVector = Qt.vector3d(geoMag.reading.x, geoMag.reading.y, geoMag.reading.z);
+                var localVector = Qt.vector3d(localMag.reading.x, localMag.reading.y, localMag.reading.z);
+
+                console.log("Local:",localMag.reading.x, ",", localMag.reading.y, ",", localMag.reading.z);
+                console.log("Geo:",geoMag.reading.x, ",", geoMag.reading.y, ",", geoMag.reading.z);
+
+                var anomalyVector = geoVector.minus(localVector);
+                console.log("Anomaly:",anomalyVector);
+
+                graphData.addData(myIndex, localVector);
+                myIndex+=1;
+
+//                geoMag.stop();
+//                localMag.stop();
 //                if (text === "Show yearly totals") {
 //                    modelProxy.autoRowCategories = true
 //                    secondaryProxy.autoRowCategories = true
@@ -285,7 +354,7 @@ Rectangle {
 //                    secondaryProxy.rowCategories = ["2010", "2011", "2012"]
 //                    text = "Show yearly totals"
 //                }
-//            }
+            }
             //! [1]
         }
 

@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     viewer.engine()->addImportPath(extraImportPath.arg(QGuiApplication::applicationDirPath(),
                                       QString::fromLatin1("qml")));
 
-    viewer.setTitle(QStringLiteral("Monthly income/expenses"));
+    viewer.setTitle(QStringLiteral("MagnetMap"));
 
     viewer.setSource(QUrl("qrc:/qml/qmlbars/main.qml"));
     viewer.setResizeMode(QQuickView::SizeRootObjectToView);
