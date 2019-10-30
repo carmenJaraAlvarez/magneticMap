@@ -1,26 +1,28 @@
 .import QtQuick 2.0 as QtQuickModuleImportedInJS
 .import QtPositioning 5.13 as QtPositioningModuleImportedInJS
 var componentArrow
-
+var newArrow
 //*************Arrow*********************************
 function createArrowObjects(ang) {
-    componentCircle = Qt.createComponent("Arrow.qml");
-    if (componentCircle.status == QtQuickModuleImportedInJS.Component.Ready)
+    console.log("in js");
+    componentArrow = Qt.createComponent("Arrow.qml");
+    if (componentArrow.status == QtQuickModuleImportedInJS.Component.Ready)
         finishCreation(ang);
     else
-        componentCircle.statusChanged.connect(finishCreation);
+        componentArrow.statusChanged.connect(finishCreation);
 
 }
 
 function finishCreation(ang) {
-    if (componentCircle.status == QtQuickModuleImportedInJS.Component.Ready) {
+    if (componentArrow.status == QtQuickModuleImportedInJS.Component.Ready) {
         //sprite = component.createObject(map, {"marker.coordinate": map.toCoordinate(Qt.point(posX,posY))});
        var arrowAng=ang;
-
-        newArrow = componentArrow.createObject();
+        console.log("js rcv ang:"+ang);
+        newArrow = componentArrow.createObject(photoFrame, {"x": 100, "y": 100});
         //mapcircle.center= QtPositioningModuleImportedInJS.QtPositioning.coordinate(coordX, coordY);
         //mapOverlay.addMapItem(mapcircle);
-        console.log("Object arrow Created ");
+
+        console.log("Object arrow Created "+newArrow);
 
         if (newArrow == null) {
             console.log("Error creating arrow Object");
