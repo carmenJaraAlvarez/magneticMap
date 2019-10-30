@@ -5,5 +5,8 @@
         <file>qml/qmlbars/main.qml</file>
         <file>qml/qmlbars/Acceler.qml</file>
         <file>qml/qmlbars/Magnet.qml</file>
+        <file>qml/qmlbars/redArrow.png</file>
+        <file>qml/qmlbars/Arrow.qml</file>
+        <file>qml/qmlbars/componentCreation.js</file>
     </qresource>
 </RCC>

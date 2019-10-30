@@ -55,10 +55,10 @@ Item {
 
 
         mag=anomalyVector.length()*1000000;//(microteslas)
-        console.log("***********Index:Anomaly->", myIndex,":",anomalyVector.toString(),mag,"->",x,",",y);
+        console.log("***********Index->", myIndex,":",anomalyVector.toString(),mag,"->",x,",",y);
                     //mag=3;
                     //var newdata={coordenates: i+"-"+j, direction: mag,  mags: mag };
-        if(myIndex<=numGrid*numGrid){
+        if(myIndex<numGrid*numGrid){
             var newdata={coordenates: x+"-"+y, direction: anomalyVector,  mags: mag };
                         dataModel.append(newdata);
         }

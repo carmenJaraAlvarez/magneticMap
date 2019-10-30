@@ -14,4 +14,5 @@ OTHER_FILES += doc/src/* \
 
 DISTFILES += \
     qml/qmlbars/Acceler.qml \
+    qml/qmlbars/Directions.qml \
     qml/qmlbars/Magnet.qml

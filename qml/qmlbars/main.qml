@@ -1,32 +1,11 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
+** This file is based on the Qt Data Visualization module of the Qt Toolkit.
 **
-** This file is part of the Qt Data Visualization module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:GPL$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 or (at your option) any later version
-** approved by the KDE Free Qt Foundation. The licenses are as published by
-** the Free Software Foundation and appearing in the file LICENSE.GPL3
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
+import "componentCreation.js" as MyScript
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
@@ -34,6 +13,13 @@ import QtDataVisualization 1.1
 import QtQuick.Window 2.0
 import "."
 import QtSensors 5.2
+
+import QtQuick 2.6
+
+import QtQuick.Window 2.1
+
+import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.1
 
 Rectangle {
     id: mainview
@@ -144,7 +130,79 @@ Rectangle {
         id: dataView
         anchors.right: mainview.right;
         anchors.bottom: mainview.bottom
+        Flickable {
+            id: flick
+            anchors.fill: parent
+            contentWidth: width * 0.9
+            contentHeight: height * 0.9
 
+        Rectangle {
+            id: photoFrame
+            visible:false
+            anchors.centerIn: parent
+            width: image.width * (1 + 0.10 * image.height / image.width)
+            height: image.height * 1.10
+            scale: 600 / Math.max(image.sourceSize.width, image.sourceSize.height)
+            Behavior on scale { NumberAnimation { duration: 200 } }
+            Behavior on x { NumberAnimation { duration: 200 } }
+            Behavior on y { NumberAnimation { duration: 200 } }
+            border.color: "black"
+            border.width: 2
+//            antialiasing: true
+
+
+            Image {
+                id: image
+                anchors.centerIn: parent
+                fillMode: Image.PreserveAspectFit
+
+
+                source: "redArrow.png"
+ //               antialiasing: true
+                property alias rotationAngle: rotation.angle
+                transform: Rotation {
+                           id: rotation
+                           origin { x: image.sourceSize.width/2;
+                                    y: image.sourceSize.height/2;
+                                    z: 0}
+                           angle: 0
+                       }
+            }
+                            PinchArea {
+                                anchors.fill: parent
+                                pinch.target: photoFrame
+                                pinch.minimumRotation: -360
+                                pinch.maximumRotation: 360
+                                pinch.minimumScale: 0.1
+                                pinch.maximumScale: 10
+                                pinch.dragAxis: Pinch.XAndYAxis
+
+                                property real zRestore: 0
+                                onSmartZoom: {
+                                    if (pinch.scale > 0) {
+                                        photoFrame.rotation = 0;
+                                        photoFrame.scale = Math.min(root.width, root.height) / Math.max(image.sourceSize.width, image.sourceSize.height) * 0.85
+                                        photoFrame.x = flick.contentX + (flick.width - photoFrame.width) / 2
+                                        photoFrame.y = flick.contentY + (flick.height - photoFrame.height) / 2
+
+
+                                    } else {
+                                        photoFrame.rotation = pinch.previousAngle
+                                        photoFrame.scale = pinch.previousScale
+                                        photoFrame.x = pinch.previousCenter.x - photoFrame.width / 2
+                                        photoFrame.y = pinch.previousCenter.y - photoFrame.height / 2
+
+
+                                    }
+                                }
+                                onPinchUpdated: {
+                                    if(pinch.angle>10 ){
+                                        root.userRotated=true;
+                                    }
+                                }
+                            }
+        }
+   }
         Bars3D {
             id: barGraph
             width: dataView.width
@@ -255,8 +313,10 @@ Rectangle {
                 elide: styleData.elideMode
                 text: customText
                 horizontalAlignment: styleData.textAlignment
+                property string originalText
 
-                property string originalText: styleData.value
+ //                   originalText: styleData.value
+
                 property string customText
 
                 onOriginalTextChanged: {
@@ -386,17 +446,26 @@ Rectangle {
             onClicked: {
                 if (text === "Show Direction") {
                     barSeries.visible = false
-                    secondarySeries.visible = true
-                    barGraph.valueAxis.labelFormat = "-%.2f M\u20AC"
-                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: @valueLabel"
-                    text = "Show Both"
-                } else if (text === "Show Both") {
-                    barSeries.visible = true
-                    barGraph.valueAxis.labelFormat = "%.2f M\u20AC"
-                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: -@valueLabel"
+                    barGraph.visible = false
+
+                    //*****************************************
+//                    secondarySeries.visible = true
+//                    barGraph.valueAxis.labelFormat = "-%.2f M\u20AC"
+
+//                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: @valueLabel"
+
+                    photoFrame.visible=true;
+
+//                    text = "Show Both"
+//                } else if (text === "Show Both") {
+//                    barSeries.visible = true
+//                    barGraph.valueAxis.labelFormat = "%.2f M\u20AC"
+//                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: -@valueLabel"
                     text = "Show Magnet"
                 } else { // text === "Show Magnet"
-                    secondarySeries.visible = false
+                    barSeries.visible = true
+                    barGraph.visible = true
+                    photoFrame.visible = false
                     text = "Show Direction"
                 }
             }
