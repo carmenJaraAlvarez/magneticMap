@@ -25,10 +25,10 @@ Rectangle {
     id: mainview
     width: 1280
     height: 1024
-
+    color:"black"
     property int myIndex: 0
     property int gridRows: 10
-    property int gridColums: 10
+    property int gridColumns: 10
 
     property int buttonLayoutHeight: 180;
     state: Screen.width < Screen.height ? "portrait" : "landscape"
@@ -153,21 +153,31 @@ Rectangle {
             color: "black"
             border.width: 2
 //            antialiasing: true
-
-
-            Row {
-                anchors.centerIn: parent
-                anchors.fill: parent
-                Repeater {
-                    model: gridColums
-                    Rectangle {
-                        width: 100;
-                        height: 100;
-                        border.width: 1
-                        color: "yellow"
-                        Arrow{}
+            Column{
+            Repeater {
+                id: repeaterRow
+                model: gridRows
+                Item{
+                    width: dataView.width
+                    height: dataView.width/gridRows
+                    Row {
+                        id:row
+                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        Repeater {
+                            id: repeaterColumn
+                            model: gridColumns
+                            Rectangle {
+                                width: dataView.width/gridColumns;
+                                height: dataView.width/gridRows;
+        //                        border.width: 1
+                                color: "transparent"
+                                Arrow{}
+                            }
+                        }
                     }
                 }
+            }
             }
              PinchArea {
                                 anchors.fill: parent
@@ -367,9 +377,6 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             text: "Read"
-//            text: "Show 2010 - 2012"
-//            clip: true
-//            //! [1]
             onClicked: {
 
 //                geoMag.start();
@@ -387,55 +394,11 @@ Rectangle {
                 graphData.addData(myIndex, localVector);
                 myIndex+=1;
 
-//                geoMag.stop();
-//                localMag.stop();
-//                if (text === "Show yearly totals") {
-//                    modelProxy.autoRowCategories = true
-//                    secondaryProxy.autoRowCategories = true
-//                    modelProxy.columnRolePattern = /^.*$/
-//                    secondaryProxy.columnRolePattern = /^.*$/
-//                    graphAxes.value.autoAdjustRange = true
-//                    barGraph.columnAxis = graphAxes.total
-//                    text = "Show all years"
-//                } else if (text === "Show all years") {
-//                    modelProxy.autoRowCategories = true
-//                    secondaryProxy.autoRowCategories = true
-//                    modelProxy.columnRolePattern = /^.*-(\d\d)$/
-//                    secondaryProxy.columnRolePattern = /^.*-(\d\d)$/
-//                    graphAxes.value.min = 0
-//                    graphAxes.value.max = 35
-//                    barGraph.columnAxis = graphAxes.column
-//                    text = "Show 2010 - 2012"
-//                } else { // text === "Show 2010 - 2012"
-//                    // Explicitly defining row categories, since we do not want to show data for
-//                    // all years in the model, just for the selected ones.
-//                    modelProxy.autoRowCategories = false
-//                    secondaryProxy.autoRowCategories = false
-//                    modelProxy.rowCategories = ["2010", "2011", "2012"]
-//                    secondaryProxy.rowCategories = ["2010", "2011", "2012"]
-//                    text = "Show yearly totals"
-//                }
             }
-            //! [1]
+
         }
 
-//        Button {
-//            id: shadowToggle
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-//            text: barGraph.shadowsSupported ? "Hide Shadows" : "Shadows not supported"
-//            clip: true
-//            enabled: barGraph.shadowsSupported
-//            onClicked: {
-//                if (barGraph.shadowQuality == AbstractGraph3D.ShadowQualityNone) {
-//                    barGraph.shadowQuality = AbstractGraph3D.ShadowQualityMedium;
-//                    text = "Hide Shadows"
-//                } else {
-//                    barGraph.shadowQuality = AbstractGraph3D.ShadowQualityNone;
-//                    text = "Show Shadows"
-//                }
-//            }
-//        }
+
 
         Button {
             id: seriesToggle
@@ -443,12 +406,14 @@ Rectangle {
             Layout.fillHeight: true
             text: "Show Direction"
             clip: true
-            //! [0]
             onClicked: {
                 if (text === "Show Direction") {
                     barSeries.visible = false
                     barGraph.visible = false
+                    //repeaterRow.itemAt(2).children[0].visible=false;//access row 3 visibility
 
+                    repeaterRow.itemAt(4).children[0].children[2].children[0].visible=false;//access 4,2 image
+                    repeaterRow.itemAt(5).children[0].children[2].children[0].rotationAngle=45;
                     //*****************************************
 //                    secondarySeries.visible = true
 //                    barGraph.valueAxis.labelFormat = "-%.2f M\u20AC"
@@ -457,11 +422,7 @@ Rectangle {
 
                     photoFrame.visible=true;
 
-//                    text = "Show Both"
-//                } else if (text === "Show Both") {
-//                    barSeries.visible = true
-//                    barGraph.valueAxis.labelFormat = "%.2f M\u20AC"
-//                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: -@valueLabel"
+
                     text = "Show Magnet"
                 } else { // text === "Show Magnet"
                     barSeries.visible = true
@@ -470,7 +431,7 @@ Rectangle {
                     text = "Show Direction"
                 }
             }
-            //! [0]
+
         }
     }
 

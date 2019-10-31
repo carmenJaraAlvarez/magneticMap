@@ -1,7 +1,7 @@
 import QtQuick 2.0
 Image {
     //id: image
-    width:parent.width
+    width:parent.width*0.9
     anchors.centerIn: parent
     fillMode: Image.PreserveAspectFit
 
