@@ -25,7 +25,10 @@ Rectangle {
     id: mainview
     width: 1280
     height: 1024
+
     property int myIndex: 0
+    property int gridRows: 10
+    property int gridColums: 10
 
     property int buttonLayoutHeight: 180;
     state: Screen.width < Screen.height ? "portrait" : "landscape"
@@ -140,35 +143,33 @@ Rectangle {
             id: photoFrame
             visible:false
             anchors.centerIn: parent
-            width: image.width * (1 + 0.10 * image.height / image.width)
-            height: image.height * 1.10
-            scale: 600 / Math.max(image.sourceSize.width, image.sourceSize.height)
+//            width: image.width * (1 + 0.10 * image.height / image.width)
+//            height: image.height * 1.10
+            anchors.fill: parent
+            scale: 1//600 / Math.max(image.sourceSize.width, image.sourceSize.height)
             Behavior on scale { NumberAnimation { duration: 200 } }
             Behavior on x { NumberAnimation { duration: 200 } }
             Behavior on y { NumberAnimation { duration: 200 } }
-            border.color: "black"
+            color: "black"
             border.width: 2
 //            antialiasing: true
 
 
-            Image {
-                id: image
+            Row {
                 anchors.centerIn: parent
-                fillMode: Image.PreserveAspectFit
-
-
-                source: "redArrow.png"
- //               antialiasing: true
-                property alias rotationAngle: rotation.angle
-                transform: Rotation {
-                           id: rotation
-                           origin { x: image.sourceSize.width/2;
-                                    y: image.sourceSize.height/2;
-                                    z: 0}
-                           angle: 0
-                       }
+                anchors.fill: parent
+                Repeater {
+                    model: gridColums
+                    Rectangle {
+                        width: 100;
+                        height: 100;
+                        border.width: 1
+                        color: "yellow"
+                        Arrow{}
+                    }
+                }
             }
-                            PinchArea {
+             PinchArea {
                                 anchors.fill: parent
                                 pinch.target: photoFrame
                                 pinch.minimumRotation: -360
@@ -197,7 +198,7 @@ Rectangle {
                                 }
                                 onPinchUpdated: {
                                     if(pinch.angle>10 ){
-                                        root.userRotated=true;
+                                        //root.userRotated=true;
                                     }
                                 }
                             }
