@@ -411,11 +411,8 @@ Rectangle {
                     barSeries.visible = false
                     barGraph.visible = false
                     //repeaterRow.itemAt(2).children[0].visible=false;//access row 3 visibility
+                    //repeaterRow.itemAt(4).children[0].children[2].children[0].visible=false;//access 4,2 image
 
-                    repeaterRow.itemAt(4).children[0].children[2].children[0].visible=false;//access 4,2 image
-                    repeaterRow.itemAt(5).children[0].children[2].children[0].rotationAngle=45;
-                    //*****************************************
-//                    secondarySeries.visible = true
 //                    barGraph.valueAxis.labelFormat = "-%.2f M\u20AC"
 
 //                    secondarySeries.itemLabelFormat = "Direction, @colLabel, @rowLabel: @valueLabel"

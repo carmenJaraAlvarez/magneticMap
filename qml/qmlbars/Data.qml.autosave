@@ -42,6 +42,8 @@ Item {
         var x;
         var y;
         var mag;
+        var angle2D=0;
+       angle2D=anomalyVector.toVector2D().
         var numGrid=10;
 //        for(var i=0;i<numGrid;i++){
 //                for(var j=0;j<numGrid;j++){
@@ -61,7 +63,7 @@ Item {
         if(myIndex<numGrid*numGrid){
             var newdata={coordenates: x+"-"+y, direction: anomalyVector,  mags: mag };
                         dataModel.append(newdata);
-            repeaterRow.itemAt(x).children[0].children[y].children[0].rotationAngle=45;
+            repeaterRow.itemAt(x).children[0].children[y].children[0].rotationAngle=angle2D;
             repeaterRow.itemAt(x).children[0].children[y].children[0].visible=true;
         }
 //            }
